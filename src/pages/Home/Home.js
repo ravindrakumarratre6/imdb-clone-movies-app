@@ -7,17 +7,39 @@ import { Carousel } from "react-responsive-carousel";
 import { Link } from "react-router-dom";
 import MovieList from "../../components/MoviesList/MovieList";
 
-
 const Home = () => {
   const [popularMovies, setPopularMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(
-      "https://api.themoviedb.org/3/movie/popular?api_key=7e7c5aca22fe4eaf6dc73b447f349e7c&language=en-US"
-    )
-      .then((res) => res.json())
-      .then((data) => setPopularMovies(data.results));
+    const fetchPopularMovies = async () => {
+      try {
+        const response = await fetch(
+          "https://api.themoviedb.org/3/movie/popular?api_key=7e7c5aca22fe4eaf6dc73b447f349e7c&language=en-US"
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setPopularMovies(data.results);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPopularMovies();
   }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="poster">
