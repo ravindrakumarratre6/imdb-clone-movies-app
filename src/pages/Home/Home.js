@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Home.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar } from "@fortawesome/free-regular-svg-icons";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import { Link } from "react-router-dom";
@@ -19,9 +19,10 @@ const Home = () => {
           "https://api.themoviedb.org/3/movie/popular?api_key=7e7c5aca22fe4eaf6dc73b447f349e7c&language=en-US"
         );
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          throw new Error(`Network response was not ok: ${response.statusText}`);
         }
         const data = await response.json();
+        console.log("data",data)
         setPopularMovies(data.results);
       } catch (error) {
         setError(error.message);

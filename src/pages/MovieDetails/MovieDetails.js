@@ -1,23 +1,34 @@
 import React, { useEffect, useState } from "react";
-import "./MovieDetails.css";
 import { useParams } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar, faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
+import "./MovieDetails.css";
 
 const MovieDetails = () => {
   const [currentMovieDetail, setMovie] = useState(null);
   const { id } = useParams();
 
   useEffect(() => {
-    const getData = () => {
-      fetch(
-        `https://api.themoviedb.org/3/movie/${id}?api_key=7e7c5aca22fe4eaf6dc73b447f349e7c&language=en-US`
-      )
-        .then((res) => res.json())
-        .then((data) => setMovie(data));
+    const getData = async () => {
+      try {
+        const response = await fetch(
+          `https://api.themoviedb.org/3/movie/${id}?api_key=7e7c5aca22fe4eaf6dc73b447f349e7c&language=en-US`
+        );
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+        const data = await response.json();
+        console.log("data", data); // Debugging log to check fetched data
+        setMovie(data);
+      } catch (error) {
+        console.error("Failed to fetch movie details:", error);
+      }
     };
 
     getData();
     window.scrollTo(0, 0);
   }, [id]);
+  
 
   return (
     <div className="movie">
@@ -52,7 +63,7 @@ const MovieDetails = () => {
             </div>
             <div className="movie__rating">
               {currentMovieDetail?.vote_average || ""}{" "}
-              <i className="fas fa-star" />
+              <FontAwesomeIcon icon={faStar} />
               <span className="movie__voteCount">
                 {currentMovieDetail
                   ? `(${currentMovieDetail.vote_count} votes)`
@@ -92,7 +103,8 @@ const MovieDetails = () => {
           >
             <p>
               <span className="movie__homeButton movie__Button">
-                Homepage <i className="newTab fas fa-external-link-alt"></i>
+                Homepage{" "}
+                <FontAwesomeIcon icon={faExternalLinkAlt} className="newTab" />
               </span>
             </p>
           </a>
@@ -106,7 +118,8 @@ const MovieDetails = () => {
           >
             <p>
               <span className="movie__imdbButton movie__Button">
-                IMDb <i className="newTab fas fa-external-link-alt"></i>
+                IMDb{" "}
+                <FontAwesomeIcon icon={faExternalLinkAlt} className="newTab" />
               </span>
             </p>
           </a>
