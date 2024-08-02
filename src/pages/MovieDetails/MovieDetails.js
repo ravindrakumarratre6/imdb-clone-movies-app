@@ -7,18 +7,44 @@ import "./MovieDetails.css";
 const MovieDetails = () => {
   const [currentMovieDetail, setMovie] = useState(null);
   const { id } = useParams();
+  const apiKey = process.env.REACT_APP_TMDB_API_KEY;
 
+  console.log("apikey",apiKey);
+  // useEffect(() => {
+  //   const getData = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=en-US`
+  //       );
+  //       if (!response.ok) {
+  //         throw new Error(`Error: ${response.statusText}`);
+  //       }
+  //       const data = await response.json();
+  //       console.log("data", data); // Debugging log to check fetched data
+  //       setMovie(data);
+  //     } catch (error) {
+  //       console.error("Failed to fetch movie details:", error);
+  //     }
+  //   };
+
+  //   getData();
+  //   window.scrollTo(0, 0);
+  // }, [id]);
+  
   useEffect(() => {
     const getData = async () => {
       try {
+        if (!apiKey) {
+          throw new Error("API Key is missing");
+        }
         const response = await fetch(
-          `https://api.themoviedb.org/3/movie/${id}?api_key=7e7c5aca22fe4eaf6dc73b447f349e7c&language=en-US`
+          `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=en-US`
         );
         if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
+          throw new Error(`Network response was not ok: ${response.statusText}`);
         }
         const data = await response.json();
-        console.log("data", data); // Debugging log to check fetched data
+        console.log("Fetched Data:", data); // Debugging log
         setMovie(data);
       } catch (error) {
         console.error("Failed to fetch movie details:", error);
@@ -27,8 +53,7 @@ const MovieDetails = () => {
 
     getData();
     window.scrollTo(0, 0);
-  }, [id]);
-  
+  }, [id, apiKey]);
 
   return (
     <div className="movie">

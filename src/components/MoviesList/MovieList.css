@@ -41,7 +41,11 @@
         height: 250px;
     }
 }
-
+.error-message {
+    color: red;
+    margin: 10px 0;
+  }
+  
 /* Media Query for screens with a maximum width of 480px */
 @media (max-width: 480px) {
     .movie__list {

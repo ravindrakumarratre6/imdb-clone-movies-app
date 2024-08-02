@@ -6,7 +6,6 @@ import "./Card.css";
 import { Link } from "react-router-dom";
 
 const Card = ({ movie }) => {
-  console.log(movie);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -45,7 +44,7 @@ const Card = ({ movie }) => {
                 </span>
               </div>
               <div className="card__description">
-                {movie?.overview.slice(0, 118) + "..."}
+                {movie?.overview?.slice(0, 118) + "..."}
               </div>
             </div>
           </div>
