@@ -15,6 +15,7 @@ const Home = () => {
   const [popularMovies, setPopularMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [timeoutWarning, setTimeoutWarning] = useState(false);
   const apiKey = process.env.REACT_APP_TMDB_API_KEY;
 
   console.log('API Key:', apiKey);
@@ -26,12 +27,18 @@ const Home = () => {
           throw new Error("API Key is missing");
         }
 
+        const timer = setTimeout(() => {
+          setTimeoutWarning(true);
+        }, 15000); // Show timeout warning after 15 seconds
+
         console.log(`Fetching popular movies with API key: ${apiKey}`);
 
         const response = await axios.get(
           `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US`,
           { timeout: 20000 } // Setting a 20-second timeout
         );
+
+        clearTimeout(timer); // Clear the timer if request is successful
 
         const data = response.data;
         console.log("Fetched data:", data);
@@ -43,7 +50,7 @@ const Home = () => {
           code: error.code,
           response: error.response,
         });
-        setError(error.message);
+        setError("Error fetching data. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -53,7 +60,12 @@ const Home = () => {
   }, [apiKey]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        Loading...
+        {timeoutWarning && <div className="timeout-warning">This is taking longer than usual. Please be patient.</div>}
+      </div>
+    );
   }
 
   if (error) {
