@@ -9,26 +9,26 @@ const MovieList = () => {
   const { id } = useParams();
   const apiKey = process.env.REACT_APP_TMDB_API_KEY;
 
-  // Debugging log
-  console.log("API Key:", apiKey); // Check if this logs the correct API key
-  
-
   useEffect(() => {
     const getData = async () => {
       setError(null);
       try {
-        const response = await fetch(
-          `https://api.themoviedb.org/3/movie/${id ? id : "popular"}?api_key=${apiKey}&language=en-US`
-        );
+        const url = `https://api.themoviedb.org/3/movie/${id ? id : "popular"}?api_key=${apiKey}&language=en-US`;
+        console.log("Request URL:", url); // Debugging log
+
+        const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`Network response was not ok: ${response.statusText}`);
         }
+
         const data = await response.json();
-        console.log("Request URL:", `https://api.themoviedb.org/3/movie/${id ? id : "popular"}?api_key=${apiKey}&language=en-US`);
         console.log("Fetched Data:", data); // Debugging log
         setMovieList(data.results || []);
       } catch (err) {
-        console.error("Error fetching data:", err); // Add this line
+        console.error("Error fetching data:", {
+          message: err.message,
+          stack: err.stack,
+        }); // Add more details for debugging
         setError(err.message);
       }
     };
