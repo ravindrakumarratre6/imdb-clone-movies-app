@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useEffect, useState } from "react";
 import "./Home.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -5,29 +6,35 @@ import { faStar } from "@fortawesome/free-solid-svg-icons";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import { Link } from "react-router-dom";
-import MovieList from "../../components/MoviesList/MovieList"; // Corrected the import path
+import MovieList from "../../components/MoviesList/MovieList";
 
 const Home = () => {
   const [popularMovies, setPopularMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const apiKey = process.env.REACT_APP_TMDB_API_KEY;
+
   console.log('API Key:', apiKey);
- 
-  
+
   useEffect(() => {
     const fetchPopularMovies = async () => {
       try {
-        const response = await fetch(
-          `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US`
-        );
-        if (!response.ok) {
-          throw new Error(`Network response was not ok: ${response.statusText}`);
+        if (!apiKey) {
+          throw new Error("API Key is missing");
         }
-        const data = await response.json();
-        console.log("data",data)
+
+        console.log(`Fetching popular movies with API key: ${apiKey}`);
+
+        const response = await axios.get(
+          `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US`,
+          { timeout: 10000 } // Setting a 10-second timeout
+        );
+
+        const data = response.data;
+        console.log("Fetched data:", data);
         setPopularMovies(data.results);
       } catch (error) {
+        console.error("Failed to fetch popular movies:", error);
         setError(error.message);
       } finally {
         setLoading(false);

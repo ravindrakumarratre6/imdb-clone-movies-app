@@ -9,42 +9,24 @@ const MovieDetails = () => {
   const { id } = useParams();
   const apiKey = process.env.REACT_APP_TMDB_API_KEY;
 
-  console.log("apikey",apiKey);
-  // useEffect(() => {
-  //   const getData = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=en-US`
-  //       );
-  //       if (!response.ok) {
-  //         throw new Error(`Error: ${response.statusText}`);
-  //       }
-  //       const data = await response.json();
-  //       console.log("data", data); // Debugging log to check fetched data
-  //       setMovie(data);
-  //     } catch (error) {
-  //       console.error("Failed to fetch movie details:", error);
-  //     }
-  //   };
-
-  //   getData();
-  //   window.scrollTo(0, 0);
-  // }, [id]);
-  
   useEffect(() => {
     const getData = async () => {
       try {
         if (!apiKey) {
           throw new Error("API Key is missing");
         }
+        console.log(`Fetching data for movie ID: ${id} with API key: ${apiKey}`);
+        
         const response = await fetch(
           `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=en-US`
         );
+        
         if (!response.ok) {
           throw new Error(`Network response was not ok: ${response.statusText}`);
         }
+
         const data = await response.json();
-        console.log("Fetched Data:", data); // Debugging log
+        console.log("Fetched Data:", data);
         setMovie(data);
       } catch (error) {
         console.error("Failed to fetch movie details:", error);
@@ -60,9 +42,7 @@ const MovieDetails = () => {
       <div className="movie__intro">
         <img
           className="movie__backdrop"
-          src={`https://image.tmdb.org/t/p/original${
-            currentMovieDetail?.backdrop_path || ""
-          }`}
+          src={`https://image.tmdb.org/t/p/original${currentMovieDetail?.backdrop_path || ""}`}
           alt={`${currentMovieDetail?.original_title || "Movie backdrop"}`}
         />
       </div>
@@ -71,9 +51,7 @@ const MovieDetails = () => {
           <div className="movie__posterBox">
             <img
               className="movie__poster"
-              src={`https://image.tmdb.org/t/p/original${
-                currentMovieDetail?.poster_path || ""
-              }`}
+              src={`https://image.tmdb.org/t/p/original${currentMovieDetail?.poster_path || ""}`}
               alt={`${currentMovieDetail?.original_title || "Movie poster"}`}
             />
           </div>
@@ -90,18 +68,14 @@ const MovieDetails = () => {
               {currentMovieDetail?.vote_average || ""}{" "}
               <FontAwesomeIcon icon={faStar} />
               <span className="movie__voteCount">
-                {currentMovieDetail
-                  ? `(${currentMovieDetail.vote_count} votes)`
-                  : ""}
+                {currentMovieDetail ? `(${currentMovieDetail.vote_count} votes)` : ""}
               </span>
             </div>
             <div className="movie__runtime">
               {currentMovieDetail ? `${currentMovieDetail.runtime} mins` : ""}
             </div>
             <div className="movie__releaseDate">
-              {currentMovieDetail
-                ? `Release date: ${currentMovieDetail.release_date}`
-                : ""}
+              {currentMovieDetail ? `Release date: ${currentMovieDetail.release_date}` : ""}
             </div>
             <div className="movie__genres">
               {currentMovieDetail?.genres?.map((genre) => (
