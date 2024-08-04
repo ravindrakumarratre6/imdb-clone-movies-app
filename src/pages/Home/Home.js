@@ -7,6 +7,9 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import { Link } from "react-router-dom";
 import MovieList from "../../components/MoviesList/MovieList";
+import axiosRetry from 'axios-retry';
+
+axiosRetry(axios, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
 
 const Home = () => {
   const [popularMovies, setPopularMovies] = useState([]);
@@ -27,14 +30,19 @@ const Home = () => {
 
         const response = await axios.get(
           `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US`,
-          { timeout: 10000 } // Setting a 10-second timeout
+          { timeout: 20000 } // Setting a 20-second timeout
         );
 
         const data = response.data;
         console.log("Fetched data:", data);
         setPopularMovies(data.results);
       } catch (error) {
-        console.error("Failed to fetch popular movies:", error);
+        console.error("Failed to fetch popular movies:", {
+          message: error.message,
+          config: error.config,
+          code: error.code,
+          response: error.response,
+        });
         setError(error.message);
       } finally {
         setLoading(false);
