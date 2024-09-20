@@ -18,10 +18,9 @@ const Home = () => {
   const [timeoutWarning, setTimeoutWarning] = useState(false);
   const apiKey = process.env.REACT_APP_TMDB_API_KEY;
 
-  console.log('API Key:', apiKey);
-
   useEffect(() => {
     const fetchPopularMovies = async () => {
+      debugger;
       try {
         if (!apiKey) {
           throw new Error("API Key is missing");
@@ -35,7 +34,7 @@ const Home = () => {
 
         const response = await axios.get(
           `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US`,
-          { timeout: 20000 } // Setting a 20-second timeout
+          { timeout: 30000 } // Increased timeout to 30 seconds
         );
 
         clearTimeout(timer); // Clear the timer if request is successful
@@ -44,13 +43,24 @@ const Home = () => {
         console.log("Fetched data:", data);
         setPopularMovies(data.results);
       } catch (error) {
-        console.error("Failed to fetch popular movies:", {
+        console.error("Failed to fetch popular movies:", error);
+        
+        // Log more detailed error information
+        console.error("Error details:", {
           message: error.message,
           config: error.config,
           code: error.code,
           response: error.response,
         });
-        setError("Error fetching data. Please try again later.");
+
+        // Differentiate between timeout and other errors
+        if (error.code === 'ECONNABORTED') {
+          setError("The request took too long - please try again later.");
+        } else if (error.response) {
+          setError(`Error: ${error.response.status} - ${error.response.statusText}`);
+        } else {
+          setError("Error fetching data. Please check your network connection.");
+        }
       } finally {
         setLoading(false);
       }

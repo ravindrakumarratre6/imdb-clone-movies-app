@@ -6,7 +6,10 @@ import "./MovieDetails.css";
 
 const MovieDetails = () => {
   const [currentMovieDetail, setMovie] = useState(null);
+  debugger;
   const { id } = useParams();
+  console.log(id);
+  
   const apiKey = process.env.REACT_APP_TMDB_API_KEY;
 
   useEffect(() => {
